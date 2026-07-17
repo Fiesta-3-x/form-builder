@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Job Sheet Builder Pro</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- PWA Settings for online form-->
+     <link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="FormBuilder">
+<link rel="apple-touch-icon" href="icon-192.png">
+</head>
+<body>
+    <!-- GREEN SUCCESS FLASH OVERLAY FOR BARCODE SCANNING -->
+    <div id="scan-success-flash" style="
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: rgba(52, 199, 89, 0.9);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 999999;
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+        pointer-events: none;
+        transition: opacity 0.2s ease-out;
+    ">
+        <span>✓ Scanned!</span>
+    </div>
+
+    <div class="app-container">
+
+        <!-- 1. HOME DASHBOARD VIEW -->
+        <main id="home-view">
+            <div class="home-header-bar">
+                <h1>My Job Sheets</h1>
+                <button class="btn-settings-top" onclick="showSettings()" aria-label="Settings">
+                    <svg class="settings-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="content-padding">
+                <button class="btn btn-primary" onclick="createNewTemplate()" style="margin-bottom: 20px;">+ Create New Template</button>
+                <div class="card">
+                    <h2>Your Templates</h2>
+                    <div id="templates-list" class="templates-list">
+                        <!-- Saved templates render here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 2. BUILDER VIEW -->
+        <main id="builder-view" class="hidden">
+            <header class="builder-header">
+                <button class="btn btn-text" onclick="showHome()">&larr; Dashboard</button>
+                <h1>Edit Template</h1>
+            </header>
+            <div class="content-padding">
+                <section class="card">
+                    <h2>1. Template Info</h2>
+                    <div class="input-group">
+                        <label for="template-name">Template Name</label>
+                        <input type="text" id="template-name" placeholder="e.g., Tracker Installation">
+                    </div>
+                </section>
+
+                <section class="card">
+    <h2>2. Add Fields</h2>
+    <!-- 2. ADD FIELDS BUTTON GRID -->
+    <div class="builder-actions" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+        <button type="button" class="btn btn-secondary" style="flex: 1 1 calc(33.333% - 8px); min-width: 90px; padding: 12px 4px; font-size: 14px; font-weight: 500; border-radius: 8px; border: none; background-color: #eef0f3;" onclick="addField('text')">Text</button>
+        <button type="button" class="btn btn-secondary" style="flex: 1 1 calc(33.333% - 8px); min-width: 90px; padding: 12px 4px; font-size: 14px; font-weight: 500; border-radius: 8px; border: none; background-color: #eef0f3;" onclick="addField('longtext')">Long Text</button>
+        <button type="button" class="btn btn-secondary" style="flex: 1 1 calc(33.333% - 8px); min-width: 90px; padding: 12px 4px; font-size: 14px; font-weight: 500; border-radius: 8px; border: none; background-color: #eef0f3;" onclick="addField('boolean')">Yes/No</button>
+        <button type="button" class="btn btn-secondary" style="flex: 1 1 calc(33.333% - 8px); min-width: 90px; padding: 12px 4px; font-size: 14px; font-weight: 500; border-radius: 8px; border: none; background-color: #eef0f3;" onclick="addField('dropdown')">Drop-down</button>
+        <button type="button" class="btn btn-secondary" style="flex: 1 1 calc(33.333% - 8px); min-width: 90px; padding: 12px 4px; font-size: 14px; font-weight: 500; border-radius: 8px; border: none; background-color: #eef0f3;" onclick="addField('photo')">Photo</button>
+        <button type="button" class="btn btn-secondary" style="flex: 1 1 calc(33.333% - 8px); min-width: 90px; padding: 12px 4px; font-size: 14px; font-weight: 500; border-radius: 8px; border: none; background-color: #eef0f3;" onclick="addField('gps')">GPS Stamp</button>
+        <button type="button" class="btn btn-secondary" style="flex: 1 1 calc(33.333% - 8px); min-width: 90px; padding: 12px 4px; font-size: 14px; font-weight: 500; border-radius: 8px; border: none; background-color: #eef0f3;" onclick="addField('barcode')">Barcode</button>
+        <button type="button" class="btn btn-secondary" style="flex: 1 1 calc(33.333% - 8px); min-width: 90px; padding: 12px 4px; font-size: 14px; font-weight: 500; border-radius: 8px; border: none; background-color: #eef0f3;" onclick="addField('signature')">Signature</button>
+        <button type="button" class="btn btn-secondary" style="flex: 1 1 calc(33.333% - 8px); min-width: 90px; padding: 12px 4px; font-size: 14px; font-weight: 500; border-radius: 8px; border: none; background-color: #eef0f3;" onclick="addField('checkbox')">Multi-Select</button>
+    </div>
+    
+    <div id="fields-list" class="fields-list">
+                        <!-- Dynamic build fields list -->
+                    </div>
+                </section>
+                <div style="height: 100px;"></div>
+                <div class="sticky-footer">
+                    <button class="btn btn-primary" onclick="saveAndPreview()">Save & Fill Form</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- 3. FILL & PREVIEW VIEW -->
+        <main id="preview-view" class="hidden">
+            <header class="no-print">
+                <button class="btn btn-text" onclick="showBuilder()">&larr; Back to Builder</button>
+            </header>
+            <div class="content-padding">
+                <div class="printable-job-sheet">
+                    <!-- Brand Header (Left: Logo, Right: Company Details) -->
+                    <div class="pdf-brand-header">
+                        <div class="pdf-logo-left">
+                            <img id="pdf-header-logo" style="max-height: 70px; display: none;" alt="Logo">
+                        </div>
+                        <div class="pdf-details-right" id="pdf-header-details"></div>
+                    </div>
+
+                    <h1 id="preview-title" class="sheet-title">Form Preview</h1>
+                    <p class="sheet-meta no-print">Fill out the fields below, then tap Share.</p>
+                    <p class="sheet-meta">Date Generated: <span id="current-date"></span></p>
+                    
+                    <form id="rendered-form" onsubmit="event.preventDefault();">
+                        <!-- Dynamic interactive inputs go here -->
+                    </form>
+                </div>
+                <div style="height: 100px;"></div>
+                <div class="sticky-footer no-print">
+                    <button class="btn btn-primary" onclick="shareJobSheet()">Share Job Sheet</button>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- 4. APP SETTINGS SCREEN -->
+    <div id="settings-view" class="hidden">
+        <div class="view-header" style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #e5e5ea;">
+            <button class="btn btn-text" onclick="showHome()">&larr; Dashboard</button>
+            <h2 style="margin: 0; font-size: 20px; font-weight: 600;">App Settings</h2>
+            <div style="width: 70px;"></div> <!-- Spacer to center the title -->
+        </div>
+        
+        <div class="settings-container">
+            <!-- Logo Setup -->
+            <div class="settings-card">
+                <h3>Company Logo</h3>
+                <div class="logo-upload-box" onclick="document.getElementById('settings-logo-input').click()">
+                    <input type="file" id="settings-logo-input" accept="image/*" style="display:none;" onchange="handleSettingsLogo(event)">
+                    <img id="settings-logo-preview" style="max-height: 80px; display: none;" alt="Logo preview">
+                    <span id="logo-upload-placeholder">📸 Tap to Upload Logo</span>
+                </div>
+                <button class="btn btn-danger" style="margin-top: 8px; padding: 6px; width: 100%;" onclick="clearSettingsLogo()">Remove Logo</button>
+            </div>
+
+            <!-- Company Details -->
+            <div class="settings-card">
+                <h3>Company Details (Top Right)</h3>
+                <textarea id="settings-company-details" rows="4" placeholder="Company Name&#10;Email / Phone&#10;VAT Number / Address" oninput="saveSettingsData()"></textarea>
+            </div>
+
+            <!-- Saved Signature Setup -->
+            <div class="settings-card">
+                <h3>Default Saved Signature</h3>
+                <div class="signature-container">
+                    <canvas id="settings-sig-canvas" class="signature-canvas" style="height: 150px; width: 100%; border: 1px dashed #c7c7cc; border-radius: 8px; background-color: #f8f8fa;"></canvas>
+                    <img id="settings-sig-preview" class="signature-print-image" style="display:none; max-height: 150px; margin: 0 auto;">
+                    <div class="signature-actions" style="margin-top: 8px; display: flex; gap: 8px;">
+                        <button class="btn btn-secondary" style="flex: 1; padding: 6px 12px; font-size:12px;" onclick="clearSettingsSignature()">Clear</button>
+                        <button class="btn btn-action" style="flex: 1; padding: 6px 12px; font-size:12px;" onclick="saveSettingsSignature()">Save Signature</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

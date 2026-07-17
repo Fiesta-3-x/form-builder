@@ -1,0 +1,812 @@
+/* ==========================================================
+   VARIABLE DEFINITIONS & BASE STYLES
+   ========================================================== */
+:root {
+    --bg-color: #f4f5f7;
+    --card-bg: #ffffff;
+    --text-color: #1a1c23;
+    --primary-color: #007aff;
+    --border-color: #e5e5ea;
+    --accent-color: #34c759;
+}
+
+html, body {
+    /* Prevent system zoom gestures while keeping scrolling smooth */
+    touch-action: pan-x pan-y;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Apply to interactive components to eliminate double-tap delays and zoom behaviors */
+button, 
+input, 
+select, 
+textarea, 
+.builder-field-row, 
+.template-item {
+    touch-action: manipulation;
+}
+
+/* Global visibility helper */
+.hidden {
+    display: none !important;
+}
+
+/* ==========================================================
+   VIEW CONTROLLER & CONTAINERS
+   ========================================================== */
+.app-container {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Force all main screens to occupy the same full-screen viewport */
+#home-view, 
+#builder-view, 
+#preview-view, 
+#settings-view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    background-color: #f2f2f7; /* iOS background gray */
+    box-sizing: border-box;
+}
+
+.content-padding {
+    padding: 16px;
+    padding-top: 16px;
+}
+
+/* ==========================================================
+   iOS SAFE AREA NOTCH & NAVIGATION HEADERS
+   ========================================================== */
+/* Push all top navigation headers down below the iOS status bar/notch */
+.home-header-bar,
+.builder-header,
+#preview-view header.no-print,
+#settings-view .view-header {
+    padding-top: calc(16px + env(safe-area-inset-top, 20px)) !important;
+    background-color: #ffffff; /* Ensures a solid background behind the status bar */
+    box-sizing: border-box;
+}
+
+header {
+    background-color: var(--card-bg);
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.home-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e5ea;
+}
+
+.home-header-bar h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1c1c1e;
+    letter-spacing: -0.5px;
+}
+
+.builder-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+}
+
+/* ==========================================================
+   CARDS & INPUT LAYOUTS
+   ========================================================== */
+.card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.card h2 {
+    margin-top: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #8e8e93;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group.conditional-hidden {
+    display: none !important;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+input[type="text"], select {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+    background-color: #fafafa;
+}
+
+/* ==========================================================
+   BUTTONS & SWITCHES
+   ========================================================== */
+.btn {
+    border: none;
+    border-radius: 10px;
+    padding: 12px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    width: 100%;
+    font-size: 16px;
+    padding: 16px;
+}
+
+.btn-secondary {
+    background-color: #e9e9eb;
+    color: var(--text-color);
+}
+
+.btn-text {
+    background: transparent;
+    color: var(--primary-color);
+    padding: 8px 0;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.btn-danger {
+    background-color: #ffeef0;
+    color: #ff3b30;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.btn-action {
+    background-color: #e5f1ff;
+    color: var(--primary-color);
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px dashed var(--primary-color);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.btn-settings-top {
+    background: #f2f2f7;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn-settings-top:active {
+    background-color: #e5e5ea;
+    transform: scale(0.95);
+}
+
+.settings-icon {
+    width: 22px;
+    height: 22px;
+    color: #3a3a3c; /* Dark charcoal color matching iOS system icons */
+    transition: transform 0.3s ease;
+}
+
+.btn-settings-top:active .settings-icon {
+    transform: rotate(45deg);
+    color: #007aff; /* Swaps to iOS blue when tapped */
+}
+
+.sticky-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    padding: 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    z-index: 100;
+}
+
+/* ==========================================================
+   DASHBOARD & BUILDER LISTS
+   ========================================================== */
+.templates-list .template-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.templates-list .template-item:last-child {
+    border-bottom: none;
+}
+
+.template-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.template-name {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.template-meta {
+    font-size: 12px;
+    color: #8e8e93;
+    margin-top: 2px;
+}
+
+.builder-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.fields-list .builder-field-row {
+    background: #f8f8fa;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    border: 1px solid var(--border-color);
+}
+
+/* Gray out a locked field element so it's obvious */
+.builder-field-row.field-is-locked {
+    background-color: #f8f8fa;
+    border-color: #e5e5ea;
+    opacity: 0.75;
+}
+
+.builder-row-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.builder-row-bottom {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.conditional-badge {
+    display: inline-block;
+    font-size: 11px;
+    background: #e1ffd1;
+    color: #248a04;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-top: 4px;
+}
+
+.field-info span {
+    font-size: 11px;
+    color: var(--primary-color);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* ==========================================================
+   BUILDER REORDERING & LOCK CONTROLS
+   ========================================================== */
+.field-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-icon {
+    background: #e9e9eb;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.btn-icon:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.btn-lock {
+    background-color: #fff9e6;
+    color: #b7791f;
+}
+
+.btn-lock.active {
+    background-color: #ffd2d2;
+    color: #c53030;
+}
+
+#global-lock-header {
+    background-color: #f2f2f7;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border: 1px solid #e5e5ea;
+}
+
+.global-lock-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.lock-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1c1c1e;
+}
+
+/* iOS-style toggle container */
+.ios-switch {
+    position: relative;
+    display: inline-block;
+    width: 62px;
+    height: 32px;
+}
+
+.ios-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Base slider track (Red/Unlocked State) */
+.ios-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ff3b30; /* iOS System Red */
+    transition: background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 32px;
+    display: flex;
+    align-items: center;
+    padding: 0 4px;
+}
+
+/* Circular handle */
+.ios-slider::before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #ffffff;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 50%;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.05);
+    z-index: 2;
+}
+
+/* Micro padlock icons layered inside the track */
+.slider-icon {
+    position: absolute;
+    font-size: 13px;
+    transition: all 0.25s ease;
+    z-index: 1;
+}
+
+/* Unlocked padlock styling */
+.ios-switch input:not(:checked) + .ios-slider .slider-icon {
+    right: 8px;
+    transform: scale(1);
+}
+
+/* Locked padlock styling */
+.ios-switch input:checked + .ios-slider .slider-icon {
+    left: 8px;
+    transform: scale(1);
+}
+
+/* iOS Green active track state (Locked) */
+.ios-switch input:checked + .ios-slider {
+    background-color: #34c759; /* iOS System Green */
+}
+
+/* Switch transitions */
+.ios-switch input:checked + .ios-slider::before {
+    transform: translateX(30px);
+}
+
+/* ==========================================================
+   BIN / DELETE BUTTON DESIGN
+   ========================================================== */
+.btn-delete-bin {
+    background-color: #ffe5e5;
+    border: none;
+    border-radius: 8px;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ff3b30;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-delete-bin:active {
+    background-color: #ffcccc;
+    transform: scale(0.95);
+}
+
+.btn-delete-bin:disabled {
+    background-color: #f2f2f7;
+    color: #aeaeb2;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.bin-icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* ==========================================================
+   CAPTURE / SIGNATURES / MEDIA INTERFACES
+   ========================================================== */
+.photo-upload-container {
+    border: 2px dashed var(--border-color);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    background: #fafafa;
+    cursor: pointer;
+}
+
+.photo-preview {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    margin-top: 10px;
+    display: none;
+}
+
+.signature-container {
+    background: #fafafa;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.signature-canvas {
+    width: 100%;
+    height: 150px;
+    display: block;
+    touch-action: none;
+}
+
+.signature-actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px;
+    background: #f1f1f3;
+    border-top: 1px solid var(--border-color);
+}
+
+.signature-print-image {
+    display: none;
+    width: 100%;
+    height: auto;
+    max-height: 150px;
+    object-fit: contain;
+    background: #fafafa;
+}
+
+/* ==========================================================
+   SETTINGS VIEW
+   ========================================================== */
+.settings-container {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.settings-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border: 1px solid #e5e5ea;
+}
+
+.settings-card h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: #1c1c1e;
+}
+
+.logo-upload-box {
+    border: 2px dashed #c7c7cc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    background-color: #f8f8fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80px;
+}
+
+#settings-company-details {
+    width: 100%;
+    border: 1px solid #c7c7cc;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* ==========================================================
+   PRINTABLE JOB SHEET WORKSPACE & PDF BRANDING
+   ========================================================== */
+.printable-job-sheet {
+    background: var(--card-bg);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.sheet-title {
+    font-size: 24px;
+    margin-top: 0;
+    margin-bottom: 8px;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 12px;
+}
+
+.sheet-meta {
+    font-size: 13px;
+    color: #8e8e93;
+    margin-bottom: 20px;
+}
+
+.pdf-brand-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Aligns top of logo and top of text line */
+    border-bottom: 2px solid #e5e5ea;
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.pdf-logo-left {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.pdf-logo-left img {
+    max-height: 70px;
+    max-width: 220px;
+    object-fit: contain;
+}
+
+.pdf-details-right {
+    flex: 1;
+    text-align: right;
+    font-size: 13px;
+    color: #3a3a3c;
+    line-height: 1.45;
+    white-space: pre-line; /* Essential for rendering multi-line details */
+}
+
+.input-group,
+.photo-upload-container,
+.signature-container,
+.card {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+/* ==========================================================
+   TRUE PDF / PRINT MEDIA CSS
+   ========================================================== */
+@media print {
+    body, .app-container {
+        background: #fff !important;
+        color: #000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    header,
+    .builder-header,
+    .sticky-footer,
+    .signature-actions,
+    .photo-upload-container span,
+    .btn,
+    .no-print,
+    #exit-print-btn {
+        display: none !important;
+    }
+
+    #preview-view {
+        display: block !important;
+    }
+
+    .printable-job-sheet {
+        box-shadow: none !important;
+        padding: 0 !important;
+        border: none !important;
+        background: transparent !important;
+    }
+
+    /* Convert interactive visual items to static output images */
+    .signature-canvas {
+        display: none !important;
+    }
+
+    .signature-print-image {
+        display: block !important;
+        max-width: 300px;
+        height: auto;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .photo-upload-container {
+        border: none !important;
+        padding: 0 !important;
+        background: transparent !important;
+    }
+
+    .photo-preview {
+        display: block !important;
+        max-width: 100% !important;
+        height: auto !important;
+        max-height: 400px !important;
+        object-fit: contain;
+    }
+}
+
+/* ==========================================================
+   CLEAN PDF GENERATION OVERLAYS (AUTO-APPLIED DURING EXPORT)
+   ========================================================== */
+/* Force layout height expansion so html2canvas renders contents below scroll area */
+body.is-generating-pdf {
+    overflow: visible !important;
+    height: auto !important;
+}
+
+body.is-generating-pdf .app-container {
+    overflow: visible !important;
+    height: auto !important;
+    padding: 0 !important;
+}
+
+body.is-generating-pdf .printable-job-sheet {
+    display: block !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+}
+
+/* Hide all buttons, prompts, and clear options */
+body.is-generating-pdf .btn,
+body.is-generating-pdf button,
+body.is-generating-pdf .signature-actions,
+body.is-generating-pdf .photo-upload-container span,
+body.is-generating-pdf .no-print {
+    display: none !important;
+}
+
+/* Strip borders/backgrounds from inputs & dropdowns so they look like flat text */
+body.is-generating-pdf input,
+body.is-generating-pdf select {
+    border: none !important;
+    background: transparent !important;
+    padding: 4px 0 !important;
+    font-size: 15px !important;
+    color: #000000 !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    pointer-events: none !important;
+    box-shadow: none !important;
+}
+
+/* Hide default input placeholders on the final PDF */
+body.is-generating-pdf input::placeholder {
+    color: transparent !important;
+}
+
+/* Clean up containers */
+body.is-generating-pdf .photo-upload-container {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+body.is-generating-pdf .signature-container {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+/* Ensure images don't overflow pages */
+body.is-generating-pdf .photo-preview {
+    max-height: 300px !important;
+    object-fit: contain;
+    margin-top: 8px;
+}
+/* Automatically capitalize the first letter inside input forms visually */
+.builder-field-row strong, .template-name {
+    text-transform: capitalize;
+}
